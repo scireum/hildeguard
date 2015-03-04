@@ -77,7 +77,6 @@ func verifyToken(accounts AccountList, token string) bool {
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Printf("%s does not exist! \n", filename)
-		help()
 		return false
 	}
 	defer file.Close()
