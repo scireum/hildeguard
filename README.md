@@ -13,6 +13,9 @@ The IP address can be a single IP, a subnet given in CIDR notation or a list the
 
 This provides an alternative to "from" directives for your SSH keys as it and gives you flexibility, security and convenience all at once.
 
+> WARNING: When testing/using HildeGUARD make sure you have a backup account with a default shell to logon in case of a bug! 
+> (Either in the software or your configuration)
+
 ## License
 
 HildeGUARD is licensed under the MIT License:
