@@ -36,7 +36,6 @@ func loadTokensFile() AccountList {
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Printf("%s cannot be read! \n", filename)
-		help()
 		return accounts
 	}
 	defer file.Close()
@@ -44,38 +43,32 @@ func loadTokensFile() AccountList {
 	scanner := bufio.NewScanner(file)
 	line := 1
 	for scanner.Scan() {
-		tuple := strings.Split(scanner.Text(), " ")
-		if len(tuple) < 2 {
-			fmt.Printf("Error in '%s' line %d: Expected a tuple like: <name> <token> [<ip>]!\n", filename, line)
-		} else {
-			account := &account{
-				name:        tuple[0],
-				token:       tuple[1],
-				acceptedIPs: "",
-			}
-			if len(tuple) > 2 {
-				account.acceptedIPs = tuple[2]
-			}
+		textLine := strings.TrimSpace(scanner.Text())
+		if !strings.HasPrefix(textLine, "#") {
+			tuple := strings.Split(scanner.Text(), " ")
+			if len(tuple) < 2 {
+				fmt.Printf("Error in '%s' line %d: Expected a tuple like: <name> <token> [<ip>]!\n", filename, line)
+			} else {
+				account := &account{
+					name:        tuple[0],
+					token:       tuple[1],
+					acceptedIPs: "",
+				}
+				if len(tuple) > 2 {
+					account.acceptedIPs = tuple[2]
+				}
 
-			accounts = append(accounts, account)
+				accounts = append(accounts, account)
+			}
+			line++
 		}
-		line++
 	}
 
 	if line == 1 {
 		fmt.Printf("%s is empty...\n", filename)
-		help()
 	}
 
 	return accounts
-}
-
-func help() {
-	fmt.Println("Please create it and enumerate accepted tokens like this:")
-	fmt.Println("<name> <token> [<ip>]")
-	fmt.Println("If you provide an ip address (can also be a subnet in CIDR notation),")
-	fmt.Println("this account can logon from this ip without providing a token.")
-	fmt.Println("Separate multiple ips with a comma.")
 }
 
 func verifyToken(accounts AccountList, token string) bool {
@@ -165,18 +158,30 @@ func main() {
 
 	accounts := loadTokensFile()
 
-	if verifyIp(accounts) {
+	if len(accounts) == 0 {
+		fmt.Println("~/.ssh/authorized_tokens does not contain any accounts!")
+		fmt.Println("")
+		fmt.Println("Please enumerate accepted tokens like this:")
+		fmt.Println("<name> <token> [<ip>]")
+		fmt.Println("If you provide an ip address (can also be a subnet in CIDR notation),")
+		fmt.Println("this account can logon from this ip without providing a token.")
+		fmt.Println("Separate multiple ips with a comma.")
+		fmt.Println("")
+		fmt.Println("Granting access due to invalid configuration!")
 		runShell()
 	} else {
-		fmt.Print("Please enter your security token: ")
-		reader := bufio.NewReader(os.Stdin)
-		token, _ := reader.ReadString('\n')
-
-		if verifyToken(accounts, strings.TrimSpace(token)) {
+		if verifyIp(accounts) {
 			runShell()
 		} else {
-			fmt.Println("Cannot authenticate you - sorry!")
+			fmt.Print("Please enter your security token: ")
+			reader := bufio.NewReader(os.Stdin)
+			token, _ := reader.ReadString('\n')
+
+			if verifyToken(accounts, strings.TrimSpace(token)) {
+				runShell()
+			} else {
+				fmt.Println("Cannot authenticate you - sorry!")
+			}
 		}
 	}
-
 }
