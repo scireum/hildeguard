@@ -64,10 +64,6 @@ func loadTokensFile() AccountList {
 		}
 	}
 
-	if line == 1 {
-		fmt.Printf("%s is empty...\n", filename)
-	}
-
 	return accounts
 }
 
