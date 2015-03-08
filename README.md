@@ -1,4 +1,4 @@
-# hildeguard
+# HildeGUARD
 
 Need an extra layer of security for your SSH connections? HildeGUARD provides two-factor authentication for SSH without entering the PAM hell or performing other black magic.
 
@@ -11,7 +11,10 @@ Test JBSWY3DPEHPK3PXP 192.168.0.1/24
 
 The IP address can be a single IP, a subnet given in CIDR notation or a list thereof separated by commas. If the users remote IP matches the IP/net listed here, the user may enter without further checks. Otherwise a one time password (TOTP), generated e.g. by Google Authenticator has to be entered.
 
-This provides an alternative to "from" directives for your SSH keys as it and gives you flexibility, security and convenience all at once.
+This provides an alternative to "from" directives on SSH keys as it and gives you flexibility, security and convenience all at once.
+
+> WARNING: When testing/using HildeGUARD make sure you have a backup account with a default shell to logon in case of a bug! 
+> (Either in the software or your configuration)
 
 ## License
 
