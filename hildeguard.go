@@ -35,7 +35,7 @@ func loadTokensFile() AccountList {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Printf("%s cannot be read! \n", filename)
+		fmt.Println(escape("0;31", fmt.Sprintf("%s cannot be read! \n", filename)))
 		return accounts
 	}
 	defer file.Close()
@@ -47,7 +47,7 @@ func loadTokensFile() AccountList {
 		if !strings.HasPrefix(textLine, "#") {
 			tuple := strings.Split(scanner.Text(), " ")
 			if len(tuple) < 2 {
-				fmt.Printf("Error in '%s' line %d: Expected a tuple like: <name> <token> [<ip>]!\n", filename, line)
+				fmt.Println(escape("0;31", fmt.Sprintf("Error in '%s' line %d: Expected a tuple like: <name> <token> [<ip>]!\n", filename, line)))
 			} else {
 				account := &account{
 					name:        tuple[0],
@@ -72,7 +72,7 @@ func verifyToken(accounts AccountList, token string) bool {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Printf("%s does not exist! \n", filename)
+		fmt.Println(escape("0;31",  fmt.Sprintf("%s does not exist!", filename)))
 		return false
 	}
 	defer file.Close()
@@ -83,7 +83,7 @@ func verifyToken(accounts AccountList, token string) bool {
 		}
 
 		if totp.Verify(token) {
-			fmt.Printf("Verified token for '%s'\n", a.name)
+			fmt.Println(escape("0;32", fmt.Sprintf("Verified token for '%s'\n", a.name)))
 			return true
 		}
 	}
@@ -103,7 +103,7 @@ func verifyIPforAccount(sshClientIp net.IP, account *account) bool {
 			} else {
 				acceptedIp := net.ParseIP(acceptedIp)
 				if acceptedIp == nil {
-					fmt.Printf("Invalid IP/CIDR '%s' in account '%s'\n", acceptedIp, account.name)
+					fmt.Println(escape("0;31", fmt.Sprintf("Invalid IP/CIDR '%s' in account '%s'", acceptedIp, account.name)))
 				} else {
 					if acceptedIp.Equal(sshClientIp) {
 						return true
@@ -123,12 +123,12 @@ func verifyIp(accounts AccountList) bool {
 	sshClientData := strings.Split(sshClient, " ")
 	sshClientIp := net.ParseIP(sshClientData[0])
 	if sshClientIp == nil {
-		fmt.Printf("Cannot parse SSH_CLIENT ip '%s'\n", sshClientData[0])
+		fmt.Println(escape("0;31", fmt.Sprintf("Cannot parse SSH_CLIENT ip '%s'", sshClientData[0])))
 		return false
 	}
 	for _, a := range accounts {
 		if verifyIPforAccount(sshClientIp, a) {
-			fmt.Printf("Verified IP for '%s'\n", a.name)
+			fmt.Println(escape("0;32", fmt.Sprintf("Verified IP for '%s'\n", a.name)))
 			return true
 		}
 	}
@@ -148,13 +148,17 @@ func runShell() {
 	}
 }
 
+func escape(esc, str string) string {
+	return "\033["+esc+"m"+str+"\033[0m";
+}
+
 func main() {
-	fmt.Printf("\nHildeGUARD is watching you! (%s)\nhttps://github.com/scireum/hildeguard\n\n", time.Now().Format(time.ANSIC))
+	fmt.Printf("\n" + escape("1", "HildeGUARD") + " is watching you! (%s)\n" + escape("0;37", "https://github.com/scireum/hildeguard") + "\n\n", 	time.Now().Format(time.ANSIC))
 
 	accounts := loadTokensFile()
 
 	if len(accounts) == 0 {
-		fmt.Println("~/.ssh/authorized_tokens does not contain any accounts!")
+		fmt.Println(escape("0;31","~/.ssh/authorized_tokens does not contain any accounts!"))
 		fmt.Println("")
 		fmt.Println("Please enumerate accepted tokens like this:")
 		fmt.Println("<name> <token> [<ip>]")
@@ -162,7 +166,7 @@ func main() {
 		fmt.Println("this account can logon from this ip without providing a token.")
 		fmt.Println("Separate multiple ips with a comma.")
 		fmt.Println("")
-		fmt.Println("Granting access due to invalid configuration!")
+		fmt.Println(escape("0;31","Granting access due to invalid configuration!"))
 		runShell()
 	} else {
 		if verifyIp(accounts) {
@@ -175,7 +179,7 @@ func main() {
 			if verifyToken(accounts, strings.TrimSpace(token)) {
 				runShell()
 			} else {
-				fmt.Println("Cannot authenticate you - sorry!")
+				fmt.Println(escape("0;31","Cannot authenticate you - sorry!"))
 			}
 		}
 	}
