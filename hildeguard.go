@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/andyHa/go-otp"
+	"github.com/hgfischer/go-otp"
 	"log"
 	"net"
 	"os"
@@ -72,14 +72,19 @@ func verifyToken(accounts AccountList, token string) bool {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Println(escape("0;31",  fmt.Sprintf("%s does not exist!", filename)))
+		fmt.Println(escape("0;31", fmt.Sprintf("%s does not exist!", filename)))
 		return false
 	}
 	defer file.Close()
 
 	for _, a := range accounts {
 		totp := &otp.TOTP{
-			Secret: a.token,
+			Secret:         a.token,
+			IsBase32Secret: true,
+			// We're quite reluctant here to compensate clock drift
+			// in case NTP is not active...
+			WindowBack:    10,
+			WindowForward: 10,
 		}
 
 		if totp.Verify(token) {
@@ -149,16 +154,16 @@ func runShell() {
 }
 
 func escape(esc, str string) string {
-	return "\033["+esc+"m"+str+"\033[0m";
+	return "\033[" + esc + "m" + str + "\033[0m"
 }
 
 func main() {
-	fmt.Printf("\n" + escape("1", "HildeGUARD") + " is watching you! (%s)\n" + escape("0;37", "https://github.com/scireum/hildeguard") + "\n\n", 	time.Now().Format(time.ANSIC))
+	fmt.Printf("\n"+escape("1", "HildeGUARD")+" is watching you! (%s)\n"+escape("0;37", "https://github.com/scireum/hildeguard")+"\n\n", time.Now().Format(time.ANSIC))
 
 	accounts := loadTokensFile()
 
 	if len(accounts) == 0 {
-		fmt.Println(escape("0;31","~/.ssh/authorized_tokens does not contain any accounts!"))
+		fmt.Println(escape("0;31", "~/.ssh/authorized_tokens does not contain any accounts!"))
 		fmt.Println("")
 		fmt.Println("Please enumerate accepted tokens like this:")
 		fmt.Println("<name> <token> [<ip>]")
@@ -166,7 +171,7 @@ func main() {
 		fmt.Println("this account can logon from this ip without providing a token.")
 		fmt.Println("Separate multiple ips with a comma.")
 		fmt.Println("")
-		fmt.Println(escape("0;31","Granting access due to invalid configuration!"))
+		fmt.Println(escape("0;31", "Granting access due to invalid configuration!"))
 		runShell()
 	} else {
 		if verifyIp(accounts) {
@@ -179,7 +184,7 @@ func main() {
 			if verifyToken(accounts, strings.TrimSpace(token)) {
 				runShell()
 			} else {
-				fmt.Println(escape("0;31","Cannot authenticate you - sorry!"))
+				fmt.Println(escape("0;31", "Cannot authenticate you - sorry!"))
 			}
 		}
 	}
