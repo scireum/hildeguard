@@ -17,8 +17,11 @@ The IP address can be a single IP, a subnet given in CIDR notation or a list the
 
 This provides an alternative to "from" directives on SSH keys as it and gives you flexibility, security and convenience all at once.
 
-> WARNING: When testing/using HildeGUARD make sure you have a backup account with a default shell to logon in case of a bug! 
-> (Either in the software or your configuration)
+> IMPORTANT:
+>  * When testing/using HildeGUARD make sure you have a backup account with a default shell to logon in case of a bug! (Either in the software or your configuration). 
+>  * It might be a good idea to keep a "backup" ssh connection open while testing hildeGUARD
+>  * Make sure your server clock is NTP synced - TOTPs require an accurate clock as the time window is only 30 seconds
+
 
 ## License
 
