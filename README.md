@@ -2,6 +2,8 @@
 
 Need an extra layer of security for your SSH connections? HildeGUARD provides two-factor authentication for SSH without entering the PAM hell or performing other black magic.
 
+![](https://github.com/scireum/hildeguard/raw/master/hildeguard.gif)
+
 All you need to do is to obtain/compile the binary and set it as your login shell. Next is to create the file **~/.ssh/authorized_tokens** in the form:
 
 ```
