@@ -24,7 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.stream.Collectors;
 
+/**
+ * Signs the given public key and outputs the generated certificate.
+ */
 public class SignPublicKeyCommand extends BasicCommand {
+
+    private static final String PREFIX_SSH = "ssh-";
 
     @Register(name = "sign", classes = CommandFactory.class)
     public static class Factory implements CommandFactory {
@@ -42,7 +47,7 @@ public class SignPublicKeyCommand extends BasicCommand {
 
         File pubKeyFile = readInputIntoFile(".pub");
         try {
-            String roles = ldap.readRoles(sr).filter(role -> role.startsWith("ssh-")).collect(Collectors.joining(","));
+            String roles = ldap.readRoles(sr).filter(role -> role.startsWith(PREFIX_SSH)).collect(Collectors.joining(","));
             if (Strings.isEmpty(roles)) {
                 throw Exceptions.createHandled().withSystemErrorMessage("No 'ssh-' permissions available...").handle();
             }

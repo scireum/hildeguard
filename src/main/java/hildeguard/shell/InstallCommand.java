@@ -16,6 +16,11 @@ import sirius.kernel.health.console.Command;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Provides a short info on how to use HildeGUARD as a server.
+ * <p>
+ * Acutally this is just a short explanation of configuring trusted CA certs in sshd.
+ */
 @Register
 public class InstallCommand implements ShellCommand {
 

@@ -16,6 +16,11 @@ import sirius.kernel.health.console.Command;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Output the current user name.
+ * <p>
+ * This is mainly used for debugging purposes.
+ */
 @Register
 public class WhoAmICommand implements ShellCommand {
 

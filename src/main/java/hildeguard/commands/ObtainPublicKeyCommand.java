@@ -15,6 +15,9 @@ import sirius.kernel.di.std.Register;
 
 import java.io.FileInputStream;
 
+/**
+ * Outputs the public key of the signing (CA) certificate.
+ */
 public class ObtainPublicKeyCommand extends BasicCommand {
 
     @Register(name = "ca", classes = CommandFactory.class)

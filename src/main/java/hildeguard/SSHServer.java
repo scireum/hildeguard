@@ -24,6 +24,9 @@ import sirius.kernel.health.Log;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Provides the actual implementation of the SSH server based on Apache MINA.
+ */
 @Register
 public class SSHServer implements Lifecycle {
 

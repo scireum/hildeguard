@@ -16,6 +16,9 @@ import sirius.kernel.health.console.Command;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Provides a short info on how to use HildeGUARD as a client.
+ */
 @Register
 public class SetupCommand implements ShellCommand {
 

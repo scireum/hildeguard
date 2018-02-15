@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator;
 
+/**
+ * Provides a minimal shell.
+ */
 public class InteractiveShell implements AsyncCommand, Command.Output, SessionAware {
 
     public static final String COMMAND_EXIT = "exit";

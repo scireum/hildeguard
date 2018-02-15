@@ -15,10 +15,21 @@ import sirius.kernel.health.console.Command;
 
 import javax.annotation.Nullable;
 
+/**
+ * Describes a command for the interactive shell.
+ */
 public interface ShellCommand extends Named {
 
     @Nullable
     String getDescription();
 
+    /**
+     * Invokes the command.
+     *
+     * @param session the current SSH session
+     * @param params  the parameters given for the command
+     * @param output  the output to write the response to
+     * @throws Exception in case of any error
+     */
     void invoke(ServerSession session, Values params, Command.Output output) throws Exception;
 }

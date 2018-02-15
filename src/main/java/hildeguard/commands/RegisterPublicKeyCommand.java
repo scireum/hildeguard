@@ -12,6 +12,7 @@ import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import sirius.kernel.commons.Exec;
 import sirius.kernel.commons.Strings;
+import sirius.kernel.di.std.ConfigValue;
 import sirius.kernel.di.std.Register;
 import sirius.kernel.health.Exceptions;
 
@@ -21,7 +22,13 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchResult;
 import java.io.File;
 
+/**
+ * Registers the public key for the current used by storing its fingerprint in the fingerprint attribute.
+ */
 public class RegisterPublicKeyCommand extends BasicCommand {
+
+    @ConfigValue("ldap.fingerprintAttribute")
+    private static String fingerprintAttribute;
 
     @Register(name = "register", classes = CommandFactory.class)
     public static class Factory implements CommandFactory {
@@ -45,7 +52,7 @@ public class RegisterPublicKeyCommand extends BasicCommand {
                                    session.getUsername()));
             ctx.modifyAttributes(sr.getNameInNamespace(),
                                  new ModificationItem[]{new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                                                                             new BasicAttribute("sshFingerprint",
+                                                                             new BasicAttribute(fingerprintAttribute,
                                                                                                 fingerprint))});
             printOut("LDAP successfully updated...");
         } finally {
@@ -59,8 +66,7 @@ public class RegisterPublicKeyCommand extends BasicCommand {
             String[] fingerprintParts = rawFingerprint.split(" ");
             if (fingerprintParts.length < 2) {
                 throw Exceptions.handle()
-                                .withSystemErrorMessage("Invalid fingerprint result: %s (%s)",
-                                                        rawFingerprint)
+                                .withSystemErrorMessage("Invalid fingerprint result: %s (%s)", rawFingerprint)
                                 .handle();
             }
 

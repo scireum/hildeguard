@@ -20,6 +20,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
+/**
+ * Provides a list of all shell commands along with a short explanation.
+ */
 @Register
 public class HelpCommand implements ShellCommand {
 

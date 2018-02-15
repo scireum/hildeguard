@@ -15,6 +15,9 @@ import sirius.kernel.health.Exceptions;
 
 import javax.naming.directory.DirContext;
 
+/**
+ * Authenticates a user and password by checking the credentials against LDAP.
+ */
 public class LDAPPasswordAuthenticator implements PasswordAuthenticator {
 
     @Part
@@ -23,7 +26,6 @@ public class LDAPPasswordAuthenticator implements PasswordAuthenticator {
     @Override
     public boolean authenticate(String username, String password, ServerSession session) {
         try {
-            session.sendDebugMessage(true, "Test", null);
             DirContext ctx = ldap.openForUser(username, password);
             return ldap.searchUser(ctx, username).isPresent();
         } catch (Exception e) {

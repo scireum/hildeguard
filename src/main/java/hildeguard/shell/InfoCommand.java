@@ -18,6 +18,9 @@ import sirius.kernel.info.Product;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Provides a extended version info.
+ */
 @Register
 public class InfoCommand implements ShellCommand {
 
