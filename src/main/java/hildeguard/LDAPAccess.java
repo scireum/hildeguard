@@ -37,6 +37,7 @@ public class LDAPAccess {
 
     private static final String LDAP_ATTR_MEMBER_OF = "memberOf";
     private static final String PARAM_USER = "user";
+    private static final String PARAM_USER_SUFFIX = "userSuffix";
 
     @ConfigValue("ldap.server")
     private String server;
@@ -109,7 +110,7 @@ public class LDAPAccess {
         searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         searchCtls.setReturningAttributes(null);
         NamingEnumeration<SearchResult> answer =
-                ctx.search(searchBase, Formatter.create(searchFilter).set(PARAM_USER, username).format(), searchCtls);
+                ctx.search(searchBase, Formatter.create(searchFilter).set(PARAM_USER, username).set(PARAM_USER_SUFFIX, userSuffix).format(), searchCtls);
         if (!answer.hasMoreElements()) {
             return Optional.empty();
         }
