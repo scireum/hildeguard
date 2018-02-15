@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.scireum</groupId>
+        <artifactId>sirius-parent</artifactId>
+        <version>3.11.4</version>
+    </parent>
+    <artifactId>hildeguard</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>hildeguard</name>
+    <description>Contains the Hildeguard SSH certificate management server.</description>
+
+    <properties>
+        <sds.developmentArtifact>hildeguard</sds.developmentArtifact>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <source.skip>true</source.skip>
+        <checkstyle.file>checkstyle-basic.xml</checkstyle.file>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.scireum</groupId>
+            <artifactId>sirius-kernel</artifactId>
+            <version>7.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.scireum</groupId>
+            <artifactId>sirius-ipl</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+    </dependencies>
+</project>
