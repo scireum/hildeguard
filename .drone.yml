@@ -1,0 +1,36 @@
+clone:
+  git:
+    image: plugins/git
+    volumes:
+    - /var/repos/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}:/drone/src/github.com/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
+pipeline:
+  compile:
+    image: scireum/sirius-build
+    commands:
+      - mvn clean compile
+    volumes:
+      - /root/.m2:/root/.m2
+      - /var/repos/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}:/drone/src/github.com/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
+    when:
+      event: push
+  package:
+    image: scireum/sirius-build
+    commands:
+      - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
+      - mvn clean package -DskipTests
+    volumes:
+      - /root/.m2:/root/.m2
+      - /var/repos/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}:/drone/src/github.com/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
+    when:
+      event: tag
+  publish:
+    image: plugins/docker
+    repo: hub.scireum.net/hildeguard/hildeguard
+    registry: hub.scireum.net
+    secrets: [ docker_username, docker_password ]
+    tags:
+      - ${DRONE_TAG}
+    volumes:
+      - /var/repos/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}:/drone/src/github.com/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
+    when:
+      event: tag
