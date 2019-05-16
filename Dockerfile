@@ -1,4 +1,4 @@
-FROM scireum/sirius-runtime:3
+FROM scireum/sirius-runtime:9
 
 USER root
 
