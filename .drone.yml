@@ -16,7 +16,7 @@ pipeline:
   package:
     image: scireum/sirius-build
     commands:
-      - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
+      - sed -i 's/ROLLING-SNAPSHOT/${DRONE_TAG}/g' pom.xml
       - mvn clean package -DskipTests
     volumes: *scireum_volumes
     when:
