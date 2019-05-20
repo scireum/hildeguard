@@ -2,6 +2,9 @@ FROM scireum/sirius-runtime:9
 
 USER root
 
+RUN apt-get update && \
+  apt-get install -y openssh-client
+
 ADD target/release-dir /home/sirius
 RUN mkdir /home/sirius/data
 
