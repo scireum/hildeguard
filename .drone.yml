@@ -16,7 +16,7 @@ pipeline:
   package:
     image: scireum/sirius-build
     commands:
-      - sed -i 's/ROLLING-SNAPSHOT/${DRONE_TAG}/g' pom.xml
+      - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
       - mvn clean package -DskipTests
     volumes: *scireum_volumes
     when:
@@ -28,6 +28,14 @@ pipeline:
     secrets: [ docker_username, docker_password ]
     tags:
       - ${DRONE_TAG}
+    volumes: *scireum_volumes
+    when:
+      event: tag
+  sonarqube:
+    image: scireum/sirius-build
+    commands:
+      - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
+      - mvn package sonar:sonar -Dsonar.projectKey=${DRONE_REPO_NAME} -DskipTests
     volumes: *scireum_volumes
     when:
       event: tag
