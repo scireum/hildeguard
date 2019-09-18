@@ -57,6 +57,7 @@ steps:
     commands:
       - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
       - mvn package sonar:sonar -Dsonar.projectKey=${DRONE_REPO_NAME} -DskipTests
+    volumes: *scireum_volumes
     when:
       event:
         - tag
