@@ -1,41 +1,70 @@
+---
 scireum_volumes: &scireum_volumes
-  - /var/repos/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}:/drone/src/github.com/${DRONE_REPO_OWNER}/${DRONE_REPO_NAME}
-  - /root/.m2:/root/.m2
+  - name: docker_socket
+    path: /var/run/docker.sock
+  - name: m2
+    path: /root/.m2
+
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
 clone:
-  git:
-    image: plugins/git
-    volumes: *scireum_volumes
-pipeline:
-  compile:
+  depth: 1
+
+steps:
+  - name: compile
     image: scireum/sirius-build
     commands:
       - mvn clean compile
     volumes: *scireum_volumes
     when:
-      event: push
-  package:
+      event:
+        - push
+
+  - name: package
     image: scireum/sirius-build
     commands:
       - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
       - mvn clean package -DskipTests
     volumes: *scireum_volumes
     when:
-      event: tag
-  publish:
+      event:
+      - tag
+
+  - name: publish
     image: plugins/docker
-    repo: hub.scireum.net/hildeguard/hildeguard
-    registry: hub.scireum.net
-    secrets: [ docker_username, docker_password ]
-    tags:
-      - ${DRONE_TAG}
+    settings:
+      registry: hub.scireum.net
+      repo: hub.scireum.net/hildeguard/hildeguard
+      tags:
+        - ${DRONE_TAG}
+    environment:
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+      DOCKER_USERNAME:
+        from_secret: docker_username
     volumes: *scireum_volumes
     when:
-      event: tag
-  sonarqube:
+      event:
+        - tag
+
+  - name: sonarqube
     image: scireum/sirius-build
     commands:
       - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
       - mvn package sonar:sonar -Dsonar.projectKey=${DRONE_REPO_NAME} -DskipTests
-    volumes: *scireum_volumes
     when:
-      event: tag
+      event:
+        - tag
+
+volumes:
+  - name: docker_socket
+    host:
+      path: /var/run/docker.sock
+  - name: m2
+    host:
+      path: /root/.m2
