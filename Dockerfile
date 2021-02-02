@@ -1,4 +1,4 @@
-FROM scireum/sirius-runtime:16
+FROM hub.scireum.com/scireum/sirius-runtime:25
 
 USER root
 

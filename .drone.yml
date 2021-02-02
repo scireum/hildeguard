@@ -17,7 +17,7 @@ clone:
 
 steps:
   - name: compile
-    image: scireum/sirius-build
+    image: hub.scireum.com/scireum/sirius-build:latest
     commands:
       - mvn clean compile
     volumes: *scireum_volumes
@@ -26,7 +26,7 @@ steps:
         - push
 
   - name: package
-    image: scireum/sirius-build
+    image: hub.scireum.com/scireum/sirius-build:latest
     commands:
       - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
       - mvn clean package -DskipTests
@@ -38,8 +38,8 @@ steps:
   - name: publish
     image: plugins/docker
     settings:
-      registry: hub.scireum.net
-      repo: hub.scireum.net/hildeguard/hildeguard
+      registry: hub.scireum.com
+      repo: hub.scireum.com/hildeguard/hildeguard
       tags:
         - ${DRONE_TAG}
     environment:
@@ -53,7 +53,7 @@ steps:
         - tag
 
   - name: sonarqube
-    image: scireum/sirius-build
+    image: hub.scireum.com/scireum/sirius-build:latest
     commands:
       - sed -i 's/DEVELOPMENT-SNAPSHOT/${DRONE_TAG}/g' pom.xml
       - mvn package sonar:sonar -Dsonar.projectKey=${DRONE_REPO_NAME} -DskipTests
